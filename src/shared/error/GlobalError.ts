@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-
+import { BadRequestError } from "./BadRequestError";
 
 interface AppError extends Error {
   statusCode?: number;
@@ -11,13 +11,12 @@ export function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  const status = err.statusCode || 500;
-  const message = err.message || "Internal server error";
-
-
-  if (status === 500) {
-    console.error("Unexpected error:", err);
+  
+  if (err instanceof BadRequestError){
+    return res.status(400).json({
+      error: err.message
+    })
   }
 
-  res.status(status).json({ message });
+  res.status(500).json({ message: err.message });
 }
