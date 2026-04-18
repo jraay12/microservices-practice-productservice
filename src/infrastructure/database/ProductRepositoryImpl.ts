@@ -10,6 +10,9 @@ export class ProductRepositoryImpl implements ProductRepository {
         ...product.toJSON(),
         price: product.price,
         costPrice: product.costPrice ?? null,
+        stocks:{
+          create: {}
+        }
       },
     });
 
@@ -24,6 +27,21 @@ export class ProductRepositoryImpl implements ProductRepository {
     const product = await this.prisma.product.findUnique({
       where: {
         sku,
+      },
+    });
+
+    if (!product) return null
+
+    return Product.hydrate({
+      ...product, price: Number(product.price),
+      costPrice: product.costPrice != null ? Number(product.costPrice) : null
+    })
+  }
+
+  async findById(id: string): Promise<Product | null> {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id,
       },
     });
 
