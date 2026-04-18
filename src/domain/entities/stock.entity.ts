@@ -26,6 +26,10 @@ export class Stock {
     this.props.quantity += quantity;
   }
 
+  static hydrate(data: StockProps): Stock {
+    return new Stock({ ...data });
+  }
+
   deduct(quantity: number) {
     if (quantity <= 0) {
       throw new Error("Quantity must be greater than zero");
