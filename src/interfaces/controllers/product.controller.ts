@@ -24,10 +24,6 @@ export class ProductController {
         data: result,
       });
     } catch (error: any) {
-      if (error instanceof ZodError) {
-        return res.status(400).json({ errors: error.flatten() });
-      }
-      
       next(error)
      
     }
