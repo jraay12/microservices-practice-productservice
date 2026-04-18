@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   CreateProductDTO,
   CreateProductSchema,
@@ -9,7 +9,7 @@ import { CreateProductUsecase } from "../../application/usecases/create-product.
 export class ProductController {
   constructor(private createProductUsecase: CreateProductUsecase) {}
 
-  create = async (req: Request, res: Response) => {
+  create = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user_id = req.user!.id;
       const dto: CreateProductDTO = CreateProductSchema.parse(req.body);
@@ -27,12 +27,9 @@ export class ProductController {
       if (error instanceof ZodError) {
         return res.status(400).json({ errors: error.flatten() });
       }
-
-      console.error("Create product error:", error);
-      return res.status(500).json({
-        message: "Internal server error",
-        error: error.message ?? "Unknown error",
-      });
+      
+      next(error)
+     
     }
   };
 }

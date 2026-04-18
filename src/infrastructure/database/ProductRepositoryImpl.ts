@@ -19,4 +19,19 @@ export class ProductRepositoryImpl implements ProductRepository {
       costPrice: data.costPrice != null ? Number(data.costPrice) : null,
     });
   }
+
+  async findBySku(sku: string): Promise<Product | null> {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        sku,
+      },
+    });
+
+    if (!product) return null
+
+    return Product.hydrate({
+      ...product, price: Number(product.price),
+      costPrice: product.costPrice != null ? Number(product.costPrice) : null
+    })
+  }
 }
